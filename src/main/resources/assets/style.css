@@ -1,0 +1,16 @@
+#list {
+	margin-top: 1em;
+	cursor: pointer;
+}
+
+#msg {
+	margin-top: 1em;
+}
+
+.right {
+	float: right;
+}
+
+#add-btn {
+	margin-top: 1em;
+}

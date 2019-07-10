@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta name="robots" content="noindex, nofollow" />
+    <meta name="googlebot" content="noindex, nofollow" />
+    
+    <meta name="theme-color" content="aliceblue" />
+
+    <!-- Bootstrap CSS -->
+    <link type="text/css" rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" />
+    <link type="text/css" rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-vue@2.0.0-rc.25/dist/bootstrap-vue.css" />
+    
+    <!-- link rel="stylesheet" href="node_modules/font-awesome/css/font-awesome.css" / -->
+    <link type="text/css" rel="stylesheet" href="style.css"/>
+    
+	<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+	<!-- script src="https://cdn.jsdelivr.net/npm/vue"></script -->
+    <script src="https://cdn.jsdelivr.net/npm/babel-polyfill@6.26.0/dist/polyfill.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap-vue@2.0.0-rc.25/dist/bootstrap-vue.min.js"></script>
+
+    <title>Todo list</title>
+  </head>
+  
+<body>
+
+    <div id="app">
+
+        <b-navbar toggleable="md" type="dark" variant="info">
+            <b-navbar-toggle target="nav_collapse"></b-navbar-toggle>
+            
+            <b-navbar-brand>
+                <span>{{ user }}'s todo list</span>
+            </b-navbar-brand>
+        </b-navbar>
+          
+        <!-- Editor popup -->
+        <b-modal ref="editor" :title="todo.name || 'New todo'" @ok="save">
+            <b-form-group label="Name" label-for="todo-name">
+           		<b-form-input id="todo-name" v-model="todo.name" />
+            </b-form-group>
+            <b-form-group label="Description" label-for="todo-description">
+           		<b-form-textarea id="todo-description" v-model="todo.description" rows="3"></b-form-textarea>
+            </b-form-group>
+            <b-form-group label="Tasks">
+            	<table>
+            		<tr v-for="t in todo.tasks" v-bind:key="t.id">
+            			<th><b-form-input :id="'task-name-' + t.id" v-model="t.name" placeholder="Name" /></th>
+            			<td><b-form-input :id="'task-description-' + t.id" v-model="t.description" placeholder="Description" /></th>
+            		</tr>
+            	</table>
+            </b-form-group>
+           	<b-button variant="danger" @click="remove">Delete todo</b-button>
+        </b-modal>
+  
+  		<!-- List view -->
+        <b-container fluid>
+            <b-row>
+                <b-col cols="2"></b-col>
+                
+                <b-col id="main" cols="8">
+                    <b-alert dismissible fade :variant="error.type" id="msg"
+                            :show="error && error.counter" @dismissed="error.counter=0">
+                        {{ error.msg }}
+                    </b-alert>
+                                    
+                	<b-list-group v-for="t in todos" v-bind:key="t.id" id="list">
+  						<b-list-group-item @click="edit(t)">{{ t.name }} <b-badge variant="primary" class="right">{{ count( t.tasks) }}</b-badge></b-list-group-item>
+					</b-list-group>
+					
+                	<b-button variant="primary" id="add-btn" @click="edit({})">Add todo</b-button>
+                </b-col>
+                    
+                <b-col cols="2"></b-col>
+            </b-row>
+        </b-container>
+        
+    </div>
+    
+    <script src="app.js" charset="UTF-8"></script>
+
+  </body>
+</html>

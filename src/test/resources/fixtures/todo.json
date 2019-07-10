@@ -1,0 +1,8 @@
+{
+	"name" : "Solve coding challenge",
+	"description" : "The task would be to create a simple REST-Service with the help of ​Dropwizard. The service shall allow to manage TODOs.",
+
+	"tasks" : [
+		{ "name" : "Implement skeleton service", "description" : "Just the bare minmum that actually runs"}
+	]
+}
