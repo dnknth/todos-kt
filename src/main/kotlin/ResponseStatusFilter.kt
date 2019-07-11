@@ -9,13 +9,23 @@ import javax.ws.rs.core.FeatureContext
 import javax.ws.rs.core.Response.Status
 import javax.ws.rs.ext.Provider
 import java.io.IOException
+import javax.ws.rs.NameBinding;
+
 
 val OK = Status.OK.getStatusCode()
+
+
+/**
+ * Add support for HTTP status codes other than 200.
+ */
+@NameBinding
+@Retention( AnnotationRetention.RUNTIME)
+annotation class ResponseStatus( val value : Status)
+
 
 /**
  * Check whether a JAX-RS endpoint is annotated with @HttpStatus
  * and change the HTTP status code from OK to the provided value
- * @author dk
  */
 @Provider
 class ResponseStatusFilter : ContainerResponseFilter {
@@ -45,4 +55,3 @@ class ResponseStatusFilter : ContainerResponseFilter {
 	    }
 	}
 }
-

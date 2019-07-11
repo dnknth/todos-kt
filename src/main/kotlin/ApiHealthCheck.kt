@@ -7,11 +7,33 @@ import com.codahale.metrics.health.HealthCheck
 import com.example.todo.api.Task
 import com.example.todo.api.Todo
 import com.example.todo.auth.User
-import com.example.todo.resources.TodoResource
+import com.example.todo.api.TodoResource
+
+
+/**
+ * Assert that a condition is satisfied
+ * @param message error message
+ * @param condition expected to be true
+ */
+fun assertTrue( message: String?, condition: Boolean) {
+	if (!condition) throw IllegalStateException( message);
+}
+
+/**
+ * Assert that two objects are equal
+ * @param expected Expected value
+ * @param actual Actual value
+ */
+fun assertEquals( expected: Any?, actual: Any?) {
+	if (expected == null && actual == null) return;
+	assertTrue(
+		"Objects are different. Expected: <$expected>, Actual: <$actual>",
+		expected != null && expected.equals( actual));
+}
+
 
 /**
  * Probe the API for health
- * @author dk
  */
 class TodoResourceHealthCheck( val api: TodoResource) : HealthCheck() {
 	

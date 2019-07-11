@@ -1,4 +1,4 @@
-package com.example.todo.resources
+package com.example.todo.api
 
 import java.net.URI
 import java.net.URISyntaxException
@@ -27,8 +27,6 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
 import com.codahale.metrics.annotation.Timed
-import com.example.todo.api.Task
-import com.example.todo.api.Todo
 import com.example.todo.auth.User
 import com.example.todo.db.ResultRow
 import com.example.todo.db.TaskDao
@@ -36,15 +34,68 @@ import com.example.todo.db.TodoDao
 import com.example.todo.http.ResponseStatus
 
 import io.dropwizard.auth.Auth
+import com.fasterxml.jackson.annotation.JsonProperty
+import org.hibernate.validator.constraints.Length
 
-val INVALID_REQUEST_BODY = 422
+
+const val NAME_LENGTH = 120
+const val DESCRIPTION_LENGTH = 2048
+
+const val INVALID_REQUEST_BODY = 422
 const val API_BASE_URI = "/todos"
-val log = LoggerFactory.getLogger( TodoResource::class.java)
+
 
 /**
  * Check if a string is null or empty
  */
 private fun isEmpty( s : String?) = (s == null || s.isEmpty())
+
+
+/**
+ * Common JSON attributes for Tasks and Todos.
+ */
+open class DtoBase(
+    @JsonProperty var id: UUID? = null,
+    @JsonProperty @Length(max = NAME_LENGTH) var name: String? = null,
+    @JsonProperty @Length(max = DESCRIPTION_LENGTH) var description: String? = null
+)
+
+
+/**
+ * JSON-serializable task.
+ */
+class Task() : DtoBase() {
+	constructor( id: UUID?, name: String?, description: String?) : this() {
+		this.id = id
+		this.name = name
+		this.description = description
+	}
+
+	override fun equals( other: Any?) = other != null && other is Task
+			&& id == other.id && name == other.name && description == other.description
+}
+
+
+/**
+ * JSON-serializable todo item.
+ */
+class Todo() : DtoBase() {
+
+	constructor( id: UUID?, name: String?, description: String?, tasks: List<Task>) : this() {
+		this.id = id
+		this.name = name
+		this.description = description
+		this.tasks = tasks.toMutableList()
+	}
+
+	@Valid
+    @JsonProperty
+	var tasks = mutableListOf<Task>()
+	
+	override fun equals( other: Any?) = other != null && other is Todo
+			&& id == other.id && name == other.name && description == other.description
+			&& tasks == other.tasks
+}
 
 
 /**
@@ -56,14 +107,13 @@ private fun isEmpty( s : String?) = (s == null || s.isEmpty())
  * <li> PUT /todos/{id} → Overwrites an existing TODO </li>
  * <li> DELETE /todos/{id} → Deletes a TODO </li> 
  * </ul>
- * 
- * @author dk
  */
 @PermitAll
 @Path( "/")
 @Produces( MediaType.APPLICATION_JSON)
 public class TodoResource( val jdbi: Jdbi) {
 
+	val log = LoggerFactory.getLogger( TodoResource::class.java)
 	val taskDao : TaskDao = jdbi.onDemand( TaskDao::class.java)
 	val todoDao : TodoDao = jdbi.onDemand( TodoDao::class.java)
 
@@ -93,7 +143,7 @@ public class TodoResource( val jdbi: Jdbi) {
      * @param todoId Todo ID
      * @return
      */
-    private fun getTasks( todoId: UUID) =
+    fun getTasks( todoId: UUID) =
     	taskDao.findByTodoId( todoId)
 			.map{ Task( it.id, it.name, it.description)}
 

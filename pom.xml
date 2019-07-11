@@ -17,6 +17,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
+		<maven.test.skip>true</maven.test.skip>
 		<maven.build.timestamp.format>yyyy-MM-dd-HH:mm</maven.build.timestamp.format>
 		<project.build.timestamp>${maven.build.timestamp}</project.build.timestamp>
 
@@ -25,7 +26,7 @@
         <io.dropwizard.version>1.3.12</io.dropwizard.version>
 		<org.junit.version>5.5.0</org.junit.version>
 
-        <mainClass>com.example.todo.TodoApplicationKt</mainClass>
+        <mainClass>com.example.todo.ApplicationKt</mainClass>
     </properties>
 
     <dependencyManagement>

@@ -7,8 +7,8 @@ import com.example.todo.auth.User
 import com.example.todo.db.ResultRow
 import com.example.todo.health.TodoResourceHealthCheck
 import com.example.todo.http.ResponseStatusFilter
-import com.example.todo.resources.TodoResource
-import com.example.todo.resources.API_BASE_URI
+import com.example.todo.api.TodoResource
+import com.example.todo.api.API_BASE_URI
 
 import io.dropwizard.Application
 import io.dropwizard.assets.AssetsBundle
@@ -29,9 +29,23 @@ import org.jdbi.v3.core.kotlin.KotlinMapper
 import org.jdbi.v3.sqlobject.SqlObjectPlugin
 import org.jdbi.v3.core.kotlin.KotlinPlugin
 
+import com.fasterxml.jackson.annotation.JsonProperty
+import io.dropwizard.Configuration
+import javax.validation.Valid
+
+
+/**
+ * YAML configuration for the Todo service
+ */
+class TodoConfiguration : Configuration() {
+
+	@Valid
+	@JsonProperty("database")
+    var dataSourceFactory = DataSourceFactory()
+}
+
 /**
  * Main application for the Todo service.
- * @author dk
  */
 class TodoApplication : Application<TodoConfiguration>() {
 
@@ -44,7 +58,7 @@ class TodoApplication : Application<TodoConfiguration>() {
      */
     override fun initialize( bootstrap: Bootstrap<TodoConfiguration>) {
         bootstrap.addBundle( object: MigrationsBundle<TodoConfiguration>() {
-            override fun getDataSourceFactory( configuration: TodoConfiguration) : DataSourceFactory 
+            override fun getDataSourceFactory( configuration: TodoConfiguration) 
                 = configuration.dataSourceFactory
         })
         bootstrap.addBundle( AssetsBundle( "/assets", "/", "index.html"))
@@ -68,11 +82,9 @@ class TodoApplication : Application<TodoConfiguration>() {
         
         // Run DB migrations
 		try {
-			println( "RUNNING MIGRATIONS")
 			Liquibase( "migrations.xml",
 				ClassLoaderResourceAccessor(),
 				JdbcConnection( jdbi.open().connection)).update("")
-			println( "FINISHED RUNNING MIGRATIONS")
 		} catch( e: LiquibaseException) {
 			throw IllegalStateException( "Database migration failed")
 		}

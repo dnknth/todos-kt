@@ -1,4 +1,4 @@
-package com.example.todo.resources
+package com.example.todo.api
 
 import org.junit.Assert.*
 
@@ -29,6 +29,7 @@ import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.TestInstance.Lifecycle
 import org.jdbi.v3.core.kotlin.KotlinPlugin
 import org.junit.Ignore
+import org.junit.jupiter.api.BeforeAll
 
 /**
  * Programmatic API test via direct method calls (no HTTP).
@@ -41,25 +42,25 @@ public class TodoResourceTest {
 	val om = Jackson.newObjectMapper()
     val TEST_USER = object : User( "test"){}
 
-    val jdbi = Jdbi.create( "jdbc:h2:mem:test")
-		.installPlugin( SqlObjectPlugin())
-        .installPlugin( KotlinPlugin())
-        .installPlugin( KotlinSqlObjectPlugin())
-        .registerRowMapper( KotlinMapper( ResultRow::class.java))
+	val jdbi : Jdbi
+	val api : TodoResource
+	
+	init {
+	    jdbi = Jdbi.create( "jdbc:h2:mem:test")
+			.installPlugin( SqlObjectPlugin())
+	        .installPlugin( KotlinPlugin())
+	        .installPlugin( KotlinSqlObjectPlugin())
+	        .registerRowMapper( KotlinMapper( ResultRow::class.java))
 
-	val api = TodoResource( jdbi)
-
-	/**
-	 * Prepare a minimal JDBI3 environment for testing.
-	 * @throws LiquibaseException DB migration failed
-	 */
-	@Before
-	fun setUp() {
+		println( "--- Running migrations ---")
         Liquibase( "migrations.xml",
         		ClassLoaderResourceAccessor(),
         		JdbcConnection( jdbi.open().connection)).update("")
-	}
 	
+		api = TodoResource( jdbi)
+	}
+
+		
 	/**
 	 * Create a Todo, check that it is saved correctly and shows up in the Todo list.
 	 * Then delete it and check that it is no longer in the todo list.

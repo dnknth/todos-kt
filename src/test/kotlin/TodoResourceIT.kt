@@ -1,4 +1,4 @@
-package com.example.todo.resources
+package com.example.todo.api
 
 import org.junit.Assert.assertEquals
 import  org.junit.Assert.assertFalse
@@ -39,7 +39,6 @@ val CREATED = Status.CREATED.getStatusCode()
 val NO_CONTENT = Status.NO_CONTENT.getStatusCode()
 val MOVED_PERMANENTLY = Status.MOVED_PERMANENTLY.getStatusCode()
 val NOT_FOUND = Status.NOT_FOUND.getStatusCode()
-// val INVALID_REQUEST_BODY = 422
 	
 
 /**
@@ -60,11 +59,8 @@ fun assertAlmostEquals( expected: Todo, actual: Todo) {
 /**
  * Integration test for the Todo HTTP endpoints.
  * It fires ReST calls against an embedded DropWizard application backed by a H2 in-memory database.
- * 
- * @author dk
  */
-@Ignore
-public class TodoResourceIntTest {
+public class TodoResourceIT {
 	
 	val om = Jackson.newObjectMapper()
 	val client = JerseyClientBuilder().build()
@@ -79,8 +75,9 @@ public class TodoResourceIntTest {
 	     * Start the embedded application with a custom H2 config.
 	     */
 	    @ClassRule @JvmStatic
-	    public val RULE = DropwizardAppRule<TodoConfiguration>( TodoApplication::class.java,
-	            		ResourceHelpers.resourceFilePath( "h2-config.yml"))
+	    public val RULE = DropwizardAppRule<TodoConfiguration>(
+				TodoApplication::class.java,
+	            ResourceHelpers.resourceFilePath( "h2-config.yml"))
 	}
 		
     /**

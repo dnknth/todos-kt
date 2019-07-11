@@ -128,7 +128,7 @@ var app = new Vue({
         count: function(tasks) {
         	let n = 0;
         	for (let i = 0; i < tasks.length; ++i) {
-        		if (tasks[i].name && tasks[i].description) ++n;
+        		if (tasks[i].name || tasks[i].description) ++n;
         	}
         	return n;
         },

@@ -8,7 +8,6 @@ import io.dropwizard.auth.basic.BasicCredentials
 
 /**
  * Dummy user implementation with NO real authentication.
- * @author dk
  */
 open class User protected constructor( val username : String): Principal {
 	override fun getName() = username
