@@ -53,4 +53,8 @@
     		</column>
     	</addColumn>
     </changeSet>
+    
+    <changeSet id="4" author="dk">
+    	<renameColumn tableName="todo" oldColumnName="user" newColumnName="username" />
+    </changeSet>
 </databaseChangeLog>

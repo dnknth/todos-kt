@@ -34,18 +34,18 @@ interface TaskDao {
  */
 interface TodoDao {
 
-	@SqlUpdate( "INSERT INTO todo (user, id, name, description, created) VALUES (:user, :id, :name, :description,  current_timestamp)")
+	@SqlUpdate( "INSERT INTO todo (username, id, name, description, created) VALUES (:user, :id, :name, :description,  current_timestamp)")
 	fun insert( @Bind("user") user: String, @Bind("id") id: UUID, @Bind("name") name: String?, @Bind("description") description: String?)
 
-	@SqlQuery( "SELECT id, name, description FROM todo WHERE user = :user ORDER BY created")
+	@SqlQuery( "SELECT id, name, description FROM todo WHERE username = :user ORDER BY created")
 	fun findAll( @Bind("user") user: String) : List<ResultRow>
 	
-	@SqlQuery( "SELECT id, name, description FROM todo WHERE user = :user AND id = :id")
+	@SqlQuery( "SELECT id, name, description FROM todo WHERE username = :user AND id = :id")
 	fun findById( @Bind("user") user: String, @Bind("id") id: UUID) : ResultRow?
 
-	@SqlUpdate( "DELETE FROM todo WHERE user = :user AND id = :id")
+	@SqlUpdate( "DELETE FROM todo WHERE username = :user AND id = :id")
 	fun deleteById( @Bind("user") user: String, @Bind("id") id: UUID)
 
-	@SqlUpdate( "UPDATE todo SET name = :name, description = :description WHERE user = :user AND id = :id")
+	@SqlUpdate( "UPDATE todo SET name = :name, description = :description WHERE username = :user AND id = :id")
 	fun updateById( @Bind("user") user: String, @Bind("id") id: UUID, @Bind("name") name: String?, @Bind("description") description: String?)
 }
