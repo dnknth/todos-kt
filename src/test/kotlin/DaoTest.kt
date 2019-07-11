@@ -48,7 +48,7 @@ class DaoTest {
 		stmt.execute( "SELECT * FROM todo")
 		val rs = stmt.resultSet
 		while (rs.next()) {
-			assertEquals( "test", rs.getString( "user"))
+			assertEquals( "test", rs.getString( "username"))
 			assertEquals( "foo",  rs.getString( "name"))
 			assertEquals( "bar",  rs.getString( "description"))
 			assertEquals( uuid,   rs.getObject( "id"))
