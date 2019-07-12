@@ -34,7 +34,6 @@ import org.junit.jupiter.api.BeforeAll
 /**
  * Programmatic API test via direct method calls (no HTTP).
  * The test fixture sets up JDBI with an in-memory H2 database.
- * @author dk
  */
 @TestInstance( Lifecycle.PER_CLASS)
 public class TodoResourceTest {

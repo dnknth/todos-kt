@@ -17,7 +17,6 @@ import org.jdbi.v3.core.Jdbi
 
 /**
  * JDBI persistence tests against an in-memory H2 database.
- * @author dk
  */
 @TestInstance( Lifecycle.PER_CLASS)
 class DaoTest {
