@@ -54,11 +54,14 @@ private fun isEmpty( s : String?) = (s == null || s.isEmpty())
 /**
  * Common JSON attributes for Tasks and Todos.
  */
-open class DtoBase(
-    @JsonProperty var id: UUID? = null,
-    @JsonProperty @Length(max = NAME_LENGTH) var name: String? = null,
+open class DtoBase() {
+    @JsonProperty var id: UUID? = null
+    @JsonProperty @Length(max = NAME_LENGTH) var name: String? = null
     @JsonProperty @Length(max = DESCRIPTION_LENGTH) var description: String? = null
-)
+
+	override fun equals( other: Any?) = other is DtoBase
+		&& id == other.id && name == other.name && description == other.description
+}
 
 
 /**
@@ -71,8 +74,7 @@ class Task() : DtoBase() {
 		this.description = description
 	}
 
-	override fun equals( other: Any?) = other != null && other is Task
-			&& id == other.id && name == other.name && description == other.description
+	override fun equals( other: Any?) = other is Task && super.equals( other)
 }
 
 
@@ -92,9 +94,8 @@ class Todo() : DtoBase() {
     @JsonProperty
 	var tasks = mutableListOf<Task>()
 	
-	override fun equals( other: Any?) = other != null && other is Todo
-			&& id == other.id && name == other.name && description == other.description
-			&& tasks == other.tasks
+	override fun equals( other: Any?) = other is Todo && super.equals( other)
+		&& tasks == other.tasks
 }
 
 
@@ -188,8 +189,7 @@ public class TodoResource( val jdbi: Jdbi) {
     	log.debug( "Adding Todo {}", todoId)
     	todoDao.insert( user.name, todoId, todo.name, todo.description)
     	
-    	for (i in todo.tasks.indices) {
-    		val task = todo.tasks[i]
+    	for ((i, task) in todo.tasks.withIndex()) {
 
         	// Skip task if neither name nor description are present
     		if (isEmpty( task.name) && isEmpty( task.description)) continue
@@ -251,8 +251,7 @@ public class TodoResource( val jdbi: Jdbi) {
     	todoDao.updateById( user.name, id, todo.name, todo.description)
     	
     	val uids = mutableSetOf<UUID>()
-    	for (i in todo.tasks.indices) {
-    		val task = todo.tasks[i]
+    	for ((i, task) in todo.tasks.withIndex()) {
     		
         	// Skip task if neither name nor description are present
         	if (isEmpty( task.name) && isEmpty( task.description)) continue
@@ -272,13 +271,11 @@ public class TodoResource( val jdbi: Jdbi) {
     		uids.add( taskid)
     	}
     	
-    	for (task in taskDao.findByTodoId(id)) {
-    		if (!uids.contains( task.id)) {
-    			// Security: Prevent deletion of Tasks belonging to other Todos
-    			// by also matching against the Todo ID
-            	log.debug( "Deleting Task {}", task.id)
-    			taskDao.deleteById( task.id, id)
-    		}
+    	taskDao.findByTodoId(id).filter{ it.id !in uids}.forEach {
+			// Security: Prevent deletion of Tasks belonging to other Todos
+			// by also matching against the Todo ID
+        	log.debug( "Deleting Task {}", it.id)
+			taskDao.deleteById( it.id, id)
     	}
     }
 }

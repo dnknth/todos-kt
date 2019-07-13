@@ -32,10 +32,10 @@ class ResponseStatusFilter : ContainerResponseFilter {
 	
 	override fun filter( containerRequestContext: ContainerRequestContext,
 						 containerResponseContext: ContainerResponseContext) {
-		if (containerResponseContext.getStatus() == OK) {
+		if (containerResponseContext.status == OK) {
 			for (annotation in containerResponseContext.entityAnnotations) {
 				if (annotation is ResponseStatus) {
-					containerResponseContext.setStatus( annotation.value.statusCode)
+					containerResponseContext.status = annotation.value.statusCode
 					break
 				}
 			}

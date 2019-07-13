@@ -28,7 +28,7 @@ fun assertEquals( expected: Any?, actual: Any?) {
 	if (expected == null && actual == null) return;
 	assertTrue(
 		"Objects are different. Expected: <$expected>, Actual: <$actual>",
-		expected != null && expected.equals( actual));
+		expected != null && expected == actual);
 }
 
 
@@ -66,12 +66,12 @@ class TodoResourceHealthCheck( val api: TodoResource) : HealthCheck() {
 			
 			val todos1 = api.listAllTodos( USER)
 			assertEquals( n+1, todos1.size)
-			assertTrue( "Todo is not in list", todos1.contains( todo2))
+			assertTrue( "Todo is not in list", todo2 in todos1)
 			
 			api.deleteTodo( USER, todo2.id!!)
 			val todos2 = api.listAllTodos( USER)
 			assertEquals( n, todos2.size)
-			assertTrue( "Todo is still in list", !todos2.contains( todo2))
+			assertTrue( "Todo is still in list", todo2 !in todos2)
 		}
 		catch (t: RuntimeException) {
 			return Result.unhealthy( t.message)

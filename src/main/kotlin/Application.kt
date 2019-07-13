@@ -89,25 +89,29 @@ class TodoApplication : Application<TodoConfiguration>() {
 			throw IllegalStateException( "Database migration failed")
 		}
 
-		// Change API base URL to avoid conflict with static assets
-        environment.jersey().setUrlPattern( API_BASE_URI + "/*")
-        
-        // Set up (dummy) authentication
-        environment.jersey().register( AuthDynamicFeature(
-                BasicCredentialAuthFilter.Builder<User>()
-                    .setAuthenticator( User.Authenticator())
-                    .setRealm( "To do list")
-                    .buildAuthFilter()))
-        environment.jersey().register( RolesAllowedDynamicFeature::class.java)
-        environment.jersey().register( AuthValueFactoryProvider.Binder<User>(User::class.java))
-
         // Set up health check
         val api = TodoResource( jdbi)
         environment.healthChecks().register( "api", TodoResourceHealthCheck( api))
         
-        // Set up URL routes and filters
-        environment.jersey().register( ResponseStatusFilter.Feature::class.java)
-    	environment.jersey().register( api)
+		// Set up ReST
+        environment.jersey().apply {
+			
+        	// Change API base URL to avoid conflict with static assets
+        	setUrlPattern( API_BASE_URI + "/*")
+			
+        	// Set up (dummy) authentication
+        	register( AuthDynamicFeature(
+        			BasicCredentialAuthFilter.Builder<User>()
+        			.setAuthenticator( User.Authenticator())
+        			.setRealm( "To do list")
+        			.buildAuthFilter()))
+        	register( RolesAllowedDynamicFeature::class.java)
+        	register( AuthValueFactoryProvider.Binder<User>(User::class.java))
+        	
+        	// Set up URL routes and filters
+        	register( ResponseStatusFilter.Feature::class.java)
+        	register( api)
+		}
     }
 }
 

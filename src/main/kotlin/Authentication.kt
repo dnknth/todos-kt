@@ -23,7 +23,7 @@ open class User protected constructor( val username : String): Principal {
 	    	val name = credentials.username
 	    	val password = StringBuilder( name).reverse().toString()
 	    	
-	    	if ( name.length > 1 && password.equals( credentials.password)) {
+	    	if ( name.length > 1 && password == credentials.password) {
 	    		return Optional.of( User( credentials.username))
 	    	}
 	        return Optional.empty()

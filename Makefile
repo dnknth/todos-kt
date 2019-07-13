@@ -2,7 +2,7 @@ JAR = target/todo-kt-0.0.1-SNAPSHOT.jar
 TAG = dnknth/todos:kt
 
 run: $(JAR)
-	java -jar $< server config.yml
+	java -jar $< server h2-config.yml
 
 $(JAR): build
 
