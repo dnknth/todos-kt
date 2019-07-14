@@ -25,5 +25,5 @@ The following techniques are demonstrated:
 
 1. Maven and Java SE 8 are required.
 1. Run `mvn clean install` to build the application,
-1. Start it with `kotlin -jar target/todo-kt-0.0.1-SNAPSHOT.jar server h2-config.yml`,
+1. Start it with `java -jar target/todo-kt-0.0.1-SNAPSHOT.jar server h2-config.yml`,
 1. Try the test UI at `http://localhost:8080`, log as any user with the reversed user name as password.
