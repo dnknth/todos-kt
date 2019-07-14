@@ -89,12 +89,12 @@ public class TodoResourceTest {
 		
 		val todos1 = api.listAllTodos( TEST_USER)
 		assertEquals( n+1, todos1.size)
-		assertTrue( todos1.contains( todo2))
+		assertTrue( todo2 in todos1)
 		
 		api.deleteTodo( TEST_USER, todo2.id!!)
 		val todos2 = api.listAllTodos( TEST_USER)
 		assertEquals( n, todos2.size)
-		assertFalse( todos2.contains( todo2))
+		assertFalse( todo2 in todos2)
 	}
 
 	/**

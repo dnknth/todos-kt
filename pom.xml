@@ -17,7 +17,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-		<maven.test.skip>true</maven.test.skip>
+		<maven.test.skip>false</maven.test.skip>
 		<maven.build.timestamp.format>yyyy-MM-dd-HH:mm</maven.build.timestamp.format>
 		<project.build.timestamp>${maven.build.timestamp}</project.build.timestamp>
 

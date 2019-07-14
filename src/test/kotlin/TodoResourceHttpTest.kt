@@ -21,7 +21,6 @@ import org.glassfish.jersey.client.JerseyClientBuilder
 import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature
 import org.junit.ClassRule
 import org.junit.Test
-import org.junit.Ignore
 
 import com.example.todo.TodoApplication
 import com.example.todo.TodoConfiguration
@@ -34,34 +33,18 @@ import io.dropwizard.testing.ResourceHelpers
 import io.dropwizard.testing.junit.DropwizardAppRule
 
 
-val OK = Status.OK.getStatusCode()
-val CREATED = Status.CREATED.getStatusCode()
-val NO_CONTENT = Status.NO_CONTENT.getStatusCode()
-val MOVED_PERMANENTLY = Status.MOVED_PERMANENTLY.getStatusCode()
-val NOT_FOUND = Status.NOT_FOUND.getStatusCode()
-	
-
-/**
- * Compare names and descriptions of a todo and its tasks.
- */
-fun assertAlmostEquals( expected: Todo, actual: Todo) {
-	assertEquals( expected.name, actual.name)
-	assertEquals( expected.description, actual.description)
-	assertEquals( expected.tasks.size, actual.tasks.size)
-	
-	for (i in expected.tasks.indices) {
-		assertEquals( expected.tasks[i].name, actual.tasks[i].name)
-		assertEquals( expected.tasks[i].description, actual.tasks[i].description)
-	}
-}
-
-
 /**
  * Integration test for the Todo HTTP endpoints.
  * It fires ReST calls against an embedded DropWizard application backed by a H2 in-memory database.
  */
-public class TodoResourceIT {
+public class TodoResourceHttpTest {
 	
+	val OK = Status.OK.getStatusCode()
+	val CREATED = Status.CREATED.getStatusCode()
+	val NO_CONTENT = Status.NO_CONTENT.getStatusCode()
+	val MOVED_PERMANENTLY = Status.MOVED_PERMANENTLY.getStatusCode()
+	val NOT_FOUND = Status.NOT_FOUND.getStatusCode()
+
 	val om = Jackson.newObjectMapper()
 	val client = JerseyClientBuilder().build()
     
@@ -69,23 +52,39 @@ public class TodoResourceIT {
     	client.register( HttpAuthenticationFeature.basic( "test", "tset"))
     }
 
-	public companion object {
+	companion object {
 	
 	    /**
 	     * Start the embedded application with a custom H2 config.
 	     */
-	    @ClassRule @JvmStatic
-	    public val RULE = DropwizardAppRule<TodoConfiguration>(
+	    @ClassRule @JvmField
+	    val RULE = DropwizardAppRule<TodoConfiguration>(
 				TodoApplication::class.java,
 	            ResourceHelpers.resourceFilePath( "h2-config.yml"))
 	}
+
+			
+	/**
+	 * Compare names and descriptions of a todo and its tasks.
+	 */
+	private fun assertAlmostEquals( expected: Todo, actual: Todo) {
+		assertEquals( expected.name, actual.name)
+		assertEquals( expected.description, actual.description)
+		assertEquals( expected.tasks.size, actual.tasks.size)
 		
+		for (i in expected.tasks.indices) {
+			assertEquals( expected.tasks[i].name, actual.tasks[i].name)
+			assertEquals( expected.tasks[i].description, actual.tasks[i].description)
+		}
+	}
+
+
     /**
      * Create a new Todo.
      * @param todo JSON payload without ID
      * @return saved Todo with ID
      */
-    fun create( todo: Todo) : Todo  {
+    private fun create( todo: Todo) : Todo  {
 
     	val response = client.target(
                 String.format( "http://localhost:%d/todos", RULE.localPort))
@@ -102,7 +101,7 @@ public class TodoResourceIT {
     /**
      * Get the list of all Todos, in no particular order
      */
-    fun getAll() : List<Todo> {
+    private fun getAll() : List<Todo> {
 
     	val response = client.target(
                  String.format( "http://localhost:%d/todos", RULE.localPort))
@@ -118,7 +117,7 @@ public class TodoResourceIT {
      * Get a specific Todo by ID
      * @param id object ID
      */
-    fun get( id: UUID) : Todo {
+    private fun get( id: UUID) : Todo {
 
     	val response = client.target(
                  String.format( "http://localhost:%d/todos/%s", RULE.localPort, id))
@@ -134,7 +133,7 @@ public class TodoResourceIT {
      * Overwrite an existing Todo
      * @param todo message payload
      */
-    fun update( todo: Todo) {
+    private fun update( todo: Todo) {
 
     	val response = client.target(
                  String.format( "http://localhost:%d/todos/%s", RULE.localPort, todo.id))
@@ -147,7 +146,7 @@ public class TodoResourceIT {
     /**
      * Delete a Todo by ID
      */
-    fun delete( id: UUID) {
+    private fun delete( id: UUID) {
 
     	val response = client.target(
                  String.format( "http://localhost:%d/todos/%s", RULE.localPort, id))
@@ -181,12 +180,12 @@ public class TodoResourceIT {
 		
 		val todos1 = getAll()
 		assertEquals( n+1, todos1.size)
-		assertTrue( todos1.contains( todo2))
+		assertTrue( todo2 in todos1)
 		
 		delete( todo2.id!!)
 		val todos2 = getAll()
 		assertEquals( n, todos2.size)
-		assertFalse( todos2.contains( todo2))
+		assertFalse( todo2 in todos2)
 	}
 	
     /**
