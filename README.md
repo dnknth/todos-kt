@@ -18,7 +18,7 @@ The following techniques are demonstrated:
 - Annotation-based JAX-RS response [postprocessing](src/main/kotlin/ResponseStatusFilter.kt),
 - Basic [authentication](src/main/kotlin/Authentication.kt) and access control,
 - A simple [health check](src/main/kotlin/ApiHealthCheck.kt),
-- [Unit](src/test/kotlin/TodoResourceTest.kt) and [integration](src/test/TodoResourceHttpTest.kt) testing,
+- [Unit](src/test/kotlin/TodoResourceTest.kt) and [integration](src/test/kotlin/TodoResourceHttpTest.kt) testing,
 - Docker [packaging](Dockerfile).
 
 ## How to start the application
